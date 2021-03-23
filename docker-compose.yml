@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  api:
+    image: 'bookstore-api:latest'
+    build:
+      context: api/
+    restart: always
+    container_name: bookstore-api
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://bookstore-db:5432/bookstore
+      - SPRING_DATASOURCE_USERNAME=${DB_USER}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+
+  db:
+    image: 'postgres:13.1-alpine'
+    container_name: bookstore-db
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=bookstore
