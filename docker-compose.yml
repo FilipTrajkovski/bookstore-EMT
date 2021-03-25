@@ -16,6 +16,21 @@ services:
       - SPRING_DATASOURCE_USERNAME=${DB_USER}
       - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
 
+  ui:
+    image: 'bookstore-ui:latest'
+    container_name: bookstore-ui
+    build:
+      context: ui/
+    restart: always
+    stdin_open: true
+    volumes:
+      - ./ui:/usr/src/app/ui
+      - /usr/src/app/ui/node_modules
+    ports:
+      - 3001:3000
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+
   db:
     image: 'postgres:13.1-alpine'
     container_name: bookstore-db

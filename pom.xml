@@ -21,7 +21,8 @@
 
 	<modules>
 		<module>api</module>
-	</modules>
+        <module>ui</module>
+    </modules>
 
 	<properties>
 		<java.version>11</java.version>
