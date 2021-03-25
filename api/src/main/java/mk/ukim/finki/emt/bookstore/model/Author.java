@@ -21,11 +21,11 @@ public class Author {
 
     @Fetch(FetchMode.JOIN)
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name="author_id")
+    @JoinColumn(name = "author_id")
     private Set<Book> books;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="country_id", nullable=false)
+    @JoinColumn(name = "country_id", nullable = false)
     private Country country;
 
 }

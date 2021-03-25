@@ -21,7 +21,7 @@ public class Country {
 
     @Fetch(FetchMode.JOIN)
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name="country_id")
+    @JoinColumn(name = "country_id")
     private Set<Author> authors;
 
 }
