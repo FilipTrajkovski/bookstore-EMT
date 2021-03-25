@@ -141,3 +141,5 @@ api/mvnw.cmd
 
 # Docker
 /api/src/main/docker/*.jar
+docker_setup.sh
+.env.dev
