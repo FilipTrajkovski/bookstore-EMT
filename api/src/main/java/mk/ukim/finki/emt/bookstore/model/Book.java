@@ -1,6 +1,8 @@
 package mk.ukim.finki.emt.bookstore.model;
 
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import mk.ukim.finki.emt.bookstore.model.enums.Category;
 
 import javax.persistence.*;
@@ -8,6 +10,8 @@ import javax.persistence.*;
 @Data
 @Table
 @Entity
+@Builder
+@NoArgsConstructor
 public class Book {
 
     @Id
@@ -15,6 +19,8 @@ public class Book {
     private Long id;
 
     private String name;
+
+    private Integer numCopies;
 
     @Enumerated(value = EnumType.STRING)
     private Category category;

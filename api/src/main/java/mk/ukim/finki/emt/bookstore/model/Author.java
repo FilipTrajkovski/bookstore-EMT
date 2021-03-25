@@ -18,7 +18,6 @@ public class Author {
 
     private String name;
     private String surname;
-    private String continent;
 
     @Fetch(FetchMode.JOIN)
     @OneToMany(cascade = CascadeType.ALL)
