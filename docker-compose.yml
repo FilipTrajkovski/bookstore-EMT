@@ -7,6 +7,8 @@ services:
       context: api/
     restart: always
     container_name: bookstore-api
+    networks:
+      - bookstore
     ports:
       - 8080:8080
     depends_on:
@@ -19,8 +21,12 @@ services:
   ui:
     image: 'bookstore-ui:latest'
     container_name: bookstore-ui
+    networks:
+      - bookstore
     build:
       context: ui/
+    depends_on:
+      - api
     restart: always
     stdin_open: true
     volumes:
@@ -35,9 +41,14 @@ services:
     image: 'postgres:13.1-alpine'
     container_name: bookstore-db
     restart: always
+    networks:
+      - bookstore
     ports:
       - 5432:5432
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=bookstore
+
+networks:
+  bookstore:
