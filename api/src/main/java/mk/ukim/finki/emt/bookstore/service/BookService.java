@@ -1,14 +1,12 @@
 package mk.ukim.finki.emt.bookstore.service;
 
 import lombok.RequiredArgsConstructor;
-import mk.ukim.finki.emt.bookstore.dto.BookDto;
-import mk.ukim.finki.emt.bookstore.dto.BookResponseDto;
-import mk.ukim.finki.emt.bookstore.dto.ResponseDto;
-import mk.ukim.finki.emt.bookstore.dto.UpsertBookDto;
+import mk.ukim.finki.emt.bookstore.dto.*;
 import mk.ukim.finki.emt.bookstore.model.Author;
 import mk.ukim.finki.emt.bookstore.model.Book;
 import mk.ukim.finki.emt.bookstore.repository.impl.BookRepository;
 import mk.ukim.finki.emt.bookstore.utils.BookMapper;
+import mk.ukim.finki.emt.bookstore.utils.FieldsCannotBeNullOrEmptyException;
 import mk.ukim.finki.emt.bookstore.utils.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,8 +17,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
-import static mk.ukim.finki.emt.bookstore.utils.ResponseMapper.errorResponse;
-import static mk.ukim.finki.emt.bookstore.utils.ResponseMapper.successResponse;
+import static mk.ukim.finki.emt.bookstore.service.AuthorService.validateUpsertAuthor;
+import static mk.ukim.finki.emt.bookstore.utils.ResponseMapper.*;
+import static org.hibernate.validator.internal.util.CollectionHelper.newArrayList;
 
 
 @Service
@@ -52,15 +51,33 @@ public class BookService {
     }
 
     public ResponseDto addBook(UpsertBookDto upsertBookDto) {
+
+        List<FieldErrorDto> fieldErrors = validateUpsertBook(upsertBookDto);
+
+        if (!fieldErrors.isEmpty()) {
+            return withFieldErrors(fieldErrors);
+        }
+
         try {
             Long authorId = upsertBookDto.getAuthorId();
-            Author author = authorService.findAuthorOrThrowException(authorId);
+            UpsertAuthorDto upsertAuthorDto = upsertBookDto.getUpsertAuthorDto();
+
+            Author author = null;
+            if (authorId != null) {
+                author = authorService.findAuthorOrThrowException(authorId);
+            } else if (upsertAuthorDto != null) {
+                author = authorService.saveAuthor(upsertAuthorDto);
+            }
 
             Book book = BookMapper.toModel(upsertBookDto, author);
 
             bookRepository.save(book);
         } catch (NotFoundException e) {
             return errorResponse(e.getMessage());
+        } catch (FieldsCannotBeNullOrEmptyException e) {
+            List<FieldErrorDto> fieldErrorsFromException = e.getFieldErrors();
+
+            return withFieldErrors(fieldErrorsFromException);
         } catch (Exception e) {
             log.error(e.getMessage());
 
@@ -136,6 +153,27 @@ public class BookService {
         return bookRepository
             .findById(bookId)
             .orElseThrow(() -> new NotFoundException("Book was not found"));
+    }
+
+    private static List<FieldErrorDto> validateUpsertBook(UpsertBookDto upsertBookDto) {
+        List<FieldErrorDto> errors = newArrayList();
+
+        Long authorId = upsertBookDto.getAuthorId();
+        UpsertAuthorDto upsertAuthorDto = upsertBookDto.getUpsertAuthorDto();
+
+        if (authorId == null && upsertAuthorDto == null) {
+            FieldErrorDto fieldErrorDto = new FieldErrorDto(
+                "book",
+                "",
+                "Book must have either a present author or a new author set"
+            );
+
+            errors.add(fieldErrorDto);
+        } else if (upsertAuthorDto != null) {
+            errors.addAll(validateUpsertAuthor(upsertAuthorDto));
+        }
+
+        return errors;
     }
 
 }

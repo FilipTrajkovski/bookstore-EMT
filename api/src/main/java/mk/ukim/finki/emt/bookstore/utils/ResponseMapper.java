@@ -1,6 +1,9 @@
 package mk.ukim.finki.emt.bookstore.utils;
 
+import mk.ukim.finki.emt.bookstore.dto.FieldErrorDto;
 import mk.ukim.finki.emt.bookstore.dto.ResponseDto;
+
+import java.util.List;
 
 public class ResponseMapper {
 
@@ -19,6 +22,15 @@ public class ResponseMapper {
             .builder()
             .success(false)
             .message(message)
+            .build();
+    }
+
+    public static ResponseDto withFieldErrors(List<FieldErrorDto> errors) {
+        return ResponseDto
+            .builder()
+            .success(false)
+            .message("Field errors occurred")
+            .fieldErrors(errors)
             .build();
     }
 

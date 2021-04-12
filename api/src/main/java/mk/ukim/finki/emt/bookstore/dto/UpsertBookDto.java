@@ -1,29 +1,29 @@
 package mk.ukim.finki.emt.bookstore.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import mk.ukim.finki.emt.bookstore.model.enums.Category;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-@Getter
-@AllArgsConstructor
+@Data
+@NoArgsConstructor
 public class UpsertBookDto {
 
     @NotNull
     @NotEmpty
-    private final String name;
+    private String name;
 
     @NotNull
-    private final Category category;
+    private Category category;
 
-    @NotNull
-    private final Long authorId;
+    private Long authorId;
+    private UpsertAuthorDto upsertAuthorDto;
 
     @Min(0)
     @NotNull
-    private final Integer numCopies;
+    private Integer numCopies;
 
 }
