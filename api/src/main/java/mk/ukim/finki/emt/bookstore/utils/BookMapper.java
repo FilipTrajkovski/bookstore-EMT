@@ -7,7 +7,6 @@ import mk.ukim.finki.emt.bookstore.model.Author;
 import mk.ukim.finki.emt.bookstore.model.Book;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 

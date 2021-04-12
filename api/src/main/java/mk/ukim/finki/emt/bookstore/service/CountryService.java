@@ -4,14 +4,12 @@ import lombok.RequiredArgsConstructor;
 import mk.ukim.finki.emt.bookstore.dto.CountryDto;
 import mk.ukim.finki.emt.bookstore.dto.FieldErrorDto;
 import mk.ukim.finki.emt.bookstore.dto.UpsertCountryDto;
-import mk.ukim.finki.emt.bookstore.model.Author;
 import mk.ukim.finki.emt.bookstore.model.Country;
 import mk.ukim.finki.emt.bookstore.repository.impl.CountryRepository;
 import mk.ukim.finki.emt.bookstore.utils.CountryMapper;
 import mk.ukim.finki.emt.bookstore.utils.FieldsCannotBeNullOrEmptyException;
 import mk.ukim.finki.emt.bookstore.utils.NotFoundException;
 import org.springframework.stereotype.Service;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
