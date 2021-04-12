@@ -1,6 +1,7 @@
 package mk.ukim.finki.emt.bookstore.service;
 
 import lombok.RequiredArgsConstructor;
+import mk.ukim.finki.emt.bookstore.dto.AuthorDto;
 import mk.ukim.finki.emt.bookstore.dto.FieldErrorDto;
 import mk.ukim.finki.emt.bookstore.dto.UpsertAuthorDto;
 import mk.ukim.finki.emt.bookstore.dto.UpsertCountryDto;
@@ -24,6 +25,12 @@ public class AuthorService {
 
     private final AuthorRepository authorRepository;
     private final CountryService countryService;
+
+    public List<AuthorDto> getAllAuthors() {
+        List<Author> authors = authorRepository.findAll();
+
+        return AuthorMapper.toDtoList(authors);
+    }
 
     public Author saveAuthor(UpsertAuthorDto upsertAuthorDto) throws FieldsCannotBeNullOrEmptyException, NotFoundException {
 

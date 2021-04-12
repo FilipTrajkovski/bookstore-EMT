@@ -1,6 +1,7 @@
 package mk.ukim.finki.emt.bookstore.service;
 
 import lombok.RequiredArgsConstructor;
+import mk.ukim.finki.emt.bookstore.dto.CountryDto;
 import mk.ukim.finki.emt.bookstore.dto.FieldErrorDto;
 import mk.ukim.finki.emt.bookstore.dto.UpsertCountryDto;
 import mk.ukim.finki.emt.bookstore.model.Author;
@@ -22,6 +23,12 @@ import static org.hibernate.validator.internal.util.CollectionHelper.newArrayLis
 public class CountryService {
 
     private final CountryRepository countryRepository;
+
+    public List<CountryDto> getAllCountries() {
+        List<Country> countries = countryRepository.findAll();
+
+        return CountryMapper.toDtoList(countries);
+    }
 
     public Country saveCountry(UpsertCountryDto upsertCountryDto) throws FieldsCannotBeNullOrEmptyException {
 
