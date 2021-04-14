@@ -28,6 +28,9 @@ const useStyles = makeStyles({
         textDecoration: `none !important`,
         textTransform: `uppercase`,
         color: `white`
+    },
+    appBar: {
+        marginBottom: `2rem`
     }
 });
 
@@ -45,7 +48,7 @@ const Header = (): JSX.Element => {
     }, [push])
 
     return (
-        <AppBar position="static">
+        <AppBar position="static" className={classes.appBar}>
             <Toolbar>
                 <Container maxWidth="xl" className={classes.navbarDisplayFlex}>
                     <IconButton edge="start" color="inherit" aria-label="home" onClick={goToHome}>
