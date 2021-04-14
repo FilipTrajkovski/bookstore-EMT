@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
@@ -6,7 +6,8 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import {
     Backdrop,
     CircularProgress,
-    Container, IconButton,
+    Container,
+    IconButton,
     Paper,
     Table,
     TableBody,
@@ -16,10 +17,13 @@ import {
     TablePagination,
     TableRow,
     TableSortLabel,
-    Toolbar, Tooltip,
+    Toolbar,
+    Tooltip,
     Typography
 } from "@material-ui/core";
 import { BookDto, HeadCell } from "../types/types";
+import { getBooksByPage } from "../services/bookServices";
+import axios from "axios";
 
 const headCells: HeadCell[] = [
     {id: "id", label: "ID"},
@@ -72,20 +76,43 @@ const useStyles = makeStyles((theme: Theme) =>
 
 type MouseEvent = React.MouseEvent<HTMLButtonElement> | null
 
+let initialLoad = true;
+
 const Books = (): JSX.Element => {
     const classes = useStyles();
 
     const [books, setBooks] = React.useState<Array<BookDto>>([]);
     const [total, setTotal] = React.useState<number>(0);
     const [page, setPage] = React.useState<number>(0);
-    const [loadingData, setLoadingData] = React.useState<boolean>(false);
+    const [loadingData, setLoadingData] = React.useState<boolean>(true);
+
+    const token = axios.CancelToken.source().token;
+    const loadBooks = useCallback((page: number) => {
+        setLoadingData(true);
+
+        getBooksByPage(page, token)
+            .then(response => {
+                setTotal(response.totalPages);
+                setBooks(response.books);
+                setPage(page);
+            })
+            .finally(() => {
+                setLoadingData(false);
+            });
+    }, [setLoadingData, token, setBooks, setTotal, setPage]);
 
     const handleChangePage = useCallback((event: MouseEvent, page: number) => {
-        setPage(page);
-
-    }, [setPage]);
+        loadBooks(page);
+    }, [loadBooks]);
 
     const emptyRows = books.length - 5;
+
+    useEffect(() => {
+        if (initialLoad) {
+            loadBooks(page);
+            initialLoad = false;
+        }
+    }, [loadBooks, page]);
 
     return (
         <Container className={classes.root}>
