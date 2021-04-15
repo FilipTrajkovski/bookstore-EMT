@@ -32,7 +32,7 @@ const headCells: HeadCell[] = [
     {id: "id", label: "ID"},
     {id: "name", label: "Name"},
     {id: "authorName", label: "Author name"},
-    {id: "authorCountry", label: "AuthorCountry"},
+    {id: "authorCountry", label: "Author country"},
     {id: "category", label: "Category"},
     {id: "numCopies", label: "Number of copies"},
     {id: "actions", label: "Actions"}
@@ -180,7 +180,7 @@ const Books = (): JSX.Element => {
                         className={classes.table}
                         aria-labelledby="tableTitle"
                         size="medium"
-                        aria-label="enhanced table"
+                        aria-label="book table"
                     >
                         <TableHead>
                             <TableRow>
