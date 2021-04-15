@@ -27,7 +27,7 @@ public class Book {
     @Enumerated(value = EnumType.STRING)
     private Category category;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "author_id", nullable = false)
     private Author author;
 }

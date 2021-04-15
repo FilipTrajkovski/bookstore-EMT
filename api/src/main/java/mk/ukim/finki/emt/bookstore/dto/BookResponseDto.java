@@ -9,7 +9,7 @@ import java.util.List;
 @Builder
 public class BookResponseDto {
 
-    private final Integer totalPages;
+    private final Long totalElements;
 
     private final List<BookDto> books;
 

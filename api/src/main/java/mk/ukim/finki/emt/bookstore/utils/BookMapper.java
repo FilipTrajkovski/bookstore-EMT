@@ -6,10 +6,6 @@ import mk.ukim.finki.emt.bookstore.dto.UpsertBookDto;
 import mk.ukim.finki.emt.bookstore.model.Author;
 import mk.ukim.finki.emt.bookstore.model.Book;
 
-import java.util.List;
-
-import static java.util.stream.Collectors.toList;
-
 public class BookMapper {
 
     private BookMapper() {
@@ -40,14 +36,18 @@ public class BookMapper {
             .authorName(book.getAuthor().getName())
             .authorCountry(book.getAuthor().getCountry().getContinent())
             .category(book.getCategory())
+            .numCopies(book.getNumCopies())
             .build();
     }
 
-    public static List<BookDto> toDtoList(List<Book> books) {
-        return books
-            .stream()
-            .map(BookMapper::toDto)
-            .collect(toList());
+    public static UpsertBookDto toUpsertDto(Book book) {
+        return UpsertBookDto
+            .builder()
+            .name(book.getName())
+            .category(book.getCategory())
+            .authorId(book.getAuthor().getId())
+            .numCopies(book.getNumCopies())
+            .build();
     }
 
 }

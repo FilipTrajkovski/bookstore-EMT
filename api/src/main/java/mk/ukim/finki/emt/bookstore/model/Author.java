@@ -1,8 +1,6 @@
 package mk.ukim.finki.emt.bookstore.model;
 
 import lombok.Data;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -19,12 +17,11 @@ public class Author {
     private String name;
     private String surname;
 
-    @Fetch(FetchMode.JOIN)
-    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "author_id")
+    @OneToMany(cascade = CascadeType.ALL)
     private Set<Book> books;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "country_id", nullable = false)
     private Country country;
 

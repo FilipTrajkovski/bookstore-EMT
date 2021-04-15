@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import mk.ukim.finki.emt.bookstore.dto.BookResponseDto;
 import mk.ukim.finki.emt.bookstore.dto.ResponseDto;
 import mk.ukim.finki.emt.bookstore.dto.UpsertBookDto;
+import mk.ukim.finki.emt.bookstore.dto.UpsertBookResponseDto;
 import mk.ukim.finki.emt.bookstore.service.BookService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,14 @@ public class BookController {
         BookResponseDto responseDto = bookService.getAllBooksInPage(page);
 
         return ResponseEntity.ok(responseDto);
+    }
+
+    @GetMapping(path = "/{id}")
+    @ResponseBody
+    public ResponseEntity<UpsertBookResponseDto> getBookById(@PathVariable Long id) {
+        UpsertBookResponseDto book = bookService.getBookById(id);
+
+        return ResponseEntity.ok(book);
     }
 
     @PostMapping

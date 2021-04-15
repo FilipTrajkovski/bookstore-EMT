@@ -22,8 +22,11 @@ import {
     Typography
 } from "@material-ui/core";
 import { BookDto, HeadCell } from "../types/types";
-import { getBooksByPage } from "../services/bookServices";
-import axios from "axios";
+import { deleteBook, getBooksByPage, markBook } from "../services/bookServices";
+import axios, { CancelToken } from "axios";
+import { useHistory } from "react-router-dom";
+import { convertEnumValue } from "../utils/utils";
+import BookmarksIcon from '@material-ui/icons/Bookmarks';
 
 const headCells: HeadCell[] = [
     {id: "id", label: "ID"},
@@ -81,18 +84,19 @@ let initialLoad = true;
 const Books = (): JSX.Element => {
     const classes = useStyles();
 
+    const {push} = useHistory();
+    const [token] = React.useState<CancelToken>(axios.CancelToken.source().token);
     const [books, setBooks] = React.useState<Array<BookDto>>([]);
     const [total, setTotal] = React.useState<number>(0);
     const [page, setPage] = React.useState<number>(0);
     const [loadingData, setLoadingData] = React.useState<boolean>(true);
 
-    const token = axios.CancelToken.source().token;
     const loadBooks = useCallback((page: number) => {
         setLoadingData(true);
 
         getBooksByPage(page, token)
             .then(response => {
-                setTotal(response.totalPages);
+                setTotal(response.totalElements);
                 setBooks(response.books);
                 setPage(page);
             })
@@ -105,6 +109,44 @@ const Books = (): JSX.Element => {
         loadBooks(page);
     }, [loadBooks]);
 
+    const onAddBookClicked = useCallback(() => {
+        push("/books/upsert");
+    }, [push]);
+
+    const onEditBookClicked = useCallback((bookId: number) => {
+        push(`/books/upsert/${bookId}`);
+    }, [push]);
+
+    const onDeleteBookClicked = useCallback((bookId: number) => {
+
+        setLoadingData(true);
+
+        deleteBook(bookId, token)
+            .then(response => {
+                setPage(0);
+                loadBooks(0);
+            })
+    }, [token, setPage, setLoadingData]);
+
+    const onMarkBookClicked = useCallback((bookId: number, index: number) => {
+
+        setLoadingData(true);
+
+        markBook(bookId, token)
+            .then(response => {
+                const modifiedBooks = [
+                    ...books
+                ]
+
+                modifiedBooks[index].numCopies -= 1;
+
+                setBooks(modifiedBooks);
+            })
+            .finally(() => {
+                setLoadingData(false);
+            })
+    }, [token, books, setBooks, setLoadingData]);
+
     const emptyRows = books.length - 5;
 
     useEffect(() => {
@@ -114,6 +156,12 @@ const Books = (): JSX.Element => {
         }
     }, [loadBooks, page]);
 
+    useEffect(() => {
+        return () => {
+            initialLoad = true;
+        };
+    }, []);
+
     return (
         <Container className={classes.root}>
             <Paper className={classes.paper}>
@@ -122,8 +170,8 @@ const Books = (): JSX.Element => {
                         Books
                     </Typography>
                     <Tooltip title="Add new book">
-                        <IconButton aria-label="add-book">
-                            <AddIcon />
+                        <IconButton aria-label="add-book" onClick={onAddBookClicked}>
+                            <AddIcon/>
                         </IconButton>
                     </Tooltip>
                 </Toolbar>
@@ -149,8 +197,7 @@ const Books = (): JSX.Element => {
                         </TableHead>
                         <TableBody>
                             {
-                                books.map((book: BookDto) => {
-
+                                books.map((book: BookDto, index: number) => {
                                     return (
                                         <TableRow key={book.id}>
                                             <TableCell component="th" scope="row" align="right">
@@ -159,17 +206,36 @@ const Books = (): JSX.Element => {
                                             <TableCell align="right">{book.name}</TableCell>
                                             <TableCell align="right">{book.authorName}</TableCell>
                                             <TableCell align="right">{book.authorCountry}</TableCell>
-                                            <TableCell align="right">{book.category}</TableCell>
+                                            <TableCell
+                                                align="right">{convertEnumValue(book.category as string)}</TableCell>
                                             <TableCell align="right">{book.numCopies}</TableCell>
                                             <TableCell align="right">
+                                                <Tooltip title="Mark book">
+                                                    <IconButton
+                                                        aria-label="mark-book"
+                                                        size="small"
+                                                        disabled={book.numCopies === 0}
+                                                        onClick={() => onMarkBookClicked(book.id, index)}
+                                                    >
+                                                        <BookmarksIcon fontSize="small"/>
+                                                    </IconButton>
+                                                </Tooltip>
                                                 <Tooltip title="Edit book">
-                                                    <IconButton aria-label="edit-book" size="small">
-                                                        <EditIcon fontSize="small" />
+                                                    <IconButton
+                                                        aria-label="edit-book"
+                                                        size="small"
+                                                        onClick={() => onEditBookClicked(book.id)}
+                                                    >
+                                                        <EditIcon fontSize="small"/>
                                                     </IconButton>
                                                 </Tooltip>
                                                 <Tooltip title="Delete book">
-                                                    <IconButton aria-label="delete-book" size="small">
-                                                        <DeleteIcon fontSize="small" />
+                                                    <IconButton
+                                                        aria-label="delete-book"
+                                                        size="small"
+                                                        onClick={() => onDeleteBookClicked(book.id)}
+                                                    >
+                                                        <DeleteIcon fontSize="small"/>
                                                     </IconButton>
                                                 </Tooltip>
                                             </TableCell>

@@ -45,9 +45,27 @@ public class BookService {
 
         return BookResponseDto
             .builder()
-            .totalPages(bookPage.getTotalPages())
+            .totalElements(bookPage.getTotalElements())
             .books(books)
             .build();
+    }
+
+    public UpsertBookResponseDto getBookById(Long id) {
+        try {
+            Book book = findBookOrThrowException(id);
+
+            return UpsertBookResponseDto
+                .builder()
+                .success(true)
+                .upsertBookDto(BookMapper.toUpsertDto(book))
+                .build();
+        } catch (NotFoundException e) {
+            return UpsertBookResponseDto
+                .builder()
+                .success(false)
+                .errorMessage("Book not found for id: " + id)
+                .build();
+        }
     }
 
     public ResponseDto addBook(UpsertBookDto upsertBookDto) {
