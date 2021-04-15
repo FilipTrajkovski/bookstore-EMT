@@ -126,7 +126,7 @@ const Books = (): JSX.Element => {
                 setPage(0);
                 loadBooks(0);
             })
-    }, [token, setPage, setLoadingData]);
+    }, [token, setPage, setLoadingData, loadBooks]);
 
     const onMarkBookClicked = useCallback((bookId: number, index: number) => {
 
