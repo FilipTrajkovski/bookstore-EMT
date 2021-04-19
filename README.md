@@ -4,6 +4,8 @@ Simple bookstore application for managing books and book copies.
 ## Instructions for running this project under docker:
 <ol>
   <li>Navigate to the <code>.env</code> file in the root directory and enter your desired credentials.</li>
+  <li>If you have the maven executable run <code>mvn clean install</code></li>
+  <li>If you have intellij run <code>clean</code> and <code>install</code> from the maven menu</li>
   <li>Run <code>docker-compose --env-file .env up -d</code></li>
   <li>You should now be able to access the three containers:
     <ol>
